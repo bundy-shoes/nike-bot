@@ -117,11 +117,12 @@ if name != "":
 else:
     bot.get_product(stock)
 
-bot.set_size(size[0], size[1])
 bot.login_checker(email, password)
+bot.set_size(size[0], size[1])
 bot.click_buy()
 bot.checkout()
-bot.finish()
+bot.go_to_payment()
+bot.finish_purchase()
 final_msg = ">>>OUR JOB HERE IS DONE, PLEASE CONFIRM YOUR DATA, FINISH THE PURCHASE MANUALLY AND \n ENJOY YOUR SNKRS :)"
 print(Fore.BLUE + final_msg + Fore.RESET)
 

@@ -101,10 +101,16 @@ class NikeBot:
 
     def click_login(self):
         xpath = "/html/body/header/div[1]/div/div/div[2]/span[1]/span[3]/a"
-        elem = WebDriverWait(self.driver, 5).until(  # wait for email field to load
+        try:
+            elem = WebDriverWait(self.driver, 5).until(  # wait for email field to load
             EC.element_to_be_clickable((By.XPATH, xpath))
-        )
-        elem.click()
+            )
+            elem.click()
+        except:
+            print("[*] The website return an error, i'm sorry :(\n")
+            self.driver.quit()
+            print(Fore.RESET)
+            exit(1)
 
     def login(self, email, password):
         email_input_name = "emailAddress"
@@ -163,19 +169,18 @@ class NikeBot:
                 break
 
     def checkout(self):
-        checkout_xpath = "/html/body/main/div[3]/div[5]/a"
         try:
             checkout_btn = WebDriverWait(self.driver, 5).until(
-                EC.element_to_be_clickable((By.XPATH, checkout_xpath))
+                EC.element_to_be_clickable((By.LINK_TEXT, "Continuar "))
             )
-            checkout_btn.click()
+            self.driver.get("https://www.nike.com.br/Checkout")
             if self.driver.current_url != "https://www.nike.com.br/Checkout":
                 self.checkout()
         except:
             error = "[*] Element was not found or is not interactable\n"
             print(error)
 
-    def finish(self):
+    def go_to_payment(self):
         go_to_payment_xpath = "/html/body/main/div/div[3]/div[4]/div[5]/button"
         confirm_xpath = "/html/body/div[12]/div/div/div[3]/button[1]"
         try:
@@ -194,8 +199,21 @@ class NikeBot:
     def login_checker(self, email, password):
         cart_xpath = "// *[ @ id = \"btn-comprar\"]"
         try:
-            cart = self.driver.find_element_by_xpath(cart_xpath)
-            self.click_buy()
+            cart = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.XPATH, cart_xpath))
+            )
         except:
             self.click_login()
             self.login(email, password)
+
+    def finish_purchase(self):
+            arrow = WebDriverWait(self.driver, 5).until(
+                    EC.element_to_be_clickable((By.CLASS_NAME, "select-cta-arrow"))
+                )
+            arrow.click()
+
+            WebDriverWait(self.driver, 5).until(
+                    print(EC.element_to_be_clickable(By.NAME, "ccidradio"))
+                )
+            cards = self.driver.find_elements_by_name("ccidradio")
+            cards[-1].click()
