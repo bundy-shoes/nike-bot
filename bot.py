@@ -33,7 +33,7 @@ class NikeBot:
 
     def open_url(self, stock):
         try:
-            WebDriverWait(self.driver, 8).until(  # wait for email field to load
+            WebDriverWait(self.driver, 15).until(  # wait for email field to load
                 EC.presence_of_element_located((By.CLASS_NAME, "minha-conta"))
             )
             if stock == "":
@@ -82,7 +82,7 @@ class NikeBot:
                 self.driver.execute_script("arguments[0].checked = true;", elem)
                 self.driver.execute_script("arguments[0].click();", elem)
 
-                print(f'>>>Selected shoe size: {size_option2}')
+                print(f'>>>Selected shoe size: {size_option2}\n')
 
             except:
                 error = WebDriverWait(self.driver, 3).until(
@@ -102,7 +102,7 @@ class NikeBot:
     def click_login(self):
         xpath = "/html/body/header/div[1]/div/div/div[2]/span[1]/span[3]/a"
         try:
-            elem = WebDriverWait(self.driver, 5).until(  # wait for email field to load
+            elem = WebDriverWait(self.driver, 10).until(  # wait for email field to load
             EC.element_to_be_clickable((By.XPATH, xpath))
             )
             elem.click()
@@ -137,7 +137,7 @@ class NikeBot:
 
         try:
             popup_btn_xpath = "/html/body/div[7]/div/div[2]/input"
-            popup_btn = WebDriverWait(self.driver, 5).until(
+            popup_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, popup_btn_xpath))
             )
             popup_btn.click()
@@ -152,7 +152,7 @@ class NikeBot:
             )
             elem.click()
         except:
-            print("[*] error trying to find purchase button\n")
+            print("[*] error trying to find purchase button, trying again\n")
 
         if self.driver.current_url != "https://www.nike.com.br/Carrinho":
             self.click_buy()
@@ -176,16 +176,16 @@ class NikeBot:
         go_to_payment_xpath = "/html/body/main/div/div[3]/div[4]/div[5]/button"
         confirm_xpath = "/html/body/div[12]/div/div/div[3]/button[1]"
         try:
-            go_to_payment_btn = WebDriverWait(self.driver, 5).until(
+            go_to_payment_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, go_to_payment_xpath))
             )
             go_to_payment_btn.click()
-            confirm_btn = WebDriverWait(self.driver, 6).until(
+            confirm_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, confirm_xpath))
             )
             confirm_btn.click()
-        except:
-            error = "[*] Element was not found or is not interactable\n"
+        except Exception as error:
+            print("[*] Element was not found or is not interactable\n")
             print(error)
 
     def login_checker(self, email, password):
@@ -209,11 +209,13 @@ class NikeBot:
                     print(EC.element_to_be_clickable(By.NAME, "ccidradio"))
                 )
             cards = self.driver.find_elements_by_name("ccidradio")
-            cards[-1].click()
+            print(cards[1])
+            cards[len(cards)-1].click()
     
             check = WebDriverWait(self.driver, 5).until(
                     print(EC.element_to_be_clickable(By.ID, "politica-trocas"))
             )
             check.click()
-        except:
+        except Exception as e:
             print("[*] Error when trying to finish purchase")
+            print(e)
