@@ -169,16 +169,8 @@ class NikeBot:
                 break
 
     def checkout(self):
-        try:
-            checkout_btn = WebDriverWait(self.driver, 5).until(
-                EC.element_to_be_clickable((By.LINK_TEXT, "Continuar "))
-            )
-            self.driver.get("https://www.nike.com.br/Checkout")
-            if self.driver.current_url != "https://www.nike.com.br/Checkout":
-                self.checkout()
-        except:
-            error = "[*] Element was not found or is not interactable\n"
-            print(error)
+        sleep(2)
+        self.driver.get("https://www.nike.com.br/Checkout")
 
     def go_to_payment(self):
         go_to_payment_xpath = "/html/body/main/div/div[3]/div[4]/div[5]/button"
@@ -207,6 +199,7 @@ class NikeBot:
             self.login(email, password)
 
     def finish_purchase(self):
+        try:
             arrow = WebDriverWait(self.driver, 5).until(
                     EC.element_to_be_clickable((By.CLASS_NAME, "select-cta-arrow"))
                 )
@@ -217,3 +210,10 @@ class NikeBot:
                 )
             cards = self.driver.find_elements_by_name("ccidradio")
             cards[-1].click()
+    
+            check = WebDriverWait(self.driver, 5).until(
+                    print(EC.element_to_be_clickable(By.ID, "politica-trocas"))
+            )
+            check.click()
+        except:
+            print("[*] Error when trying to finish purchase")
