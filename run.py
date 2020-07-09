@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sys
 from colorama import Fore
 from bot import NikeBot
