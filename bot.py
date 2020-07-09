@@ -9,9 +9,9 @@ from selenium.webdriver.common.keys import Keys
 
 class NikeBot:
     URL_CAL = "https://www.nike.com.br/Snkrs#calendario"
-    
+
     URL_EST = "https://www.nike.com.br/Snkrs#estoque"
-    
+
     PATH_EDGE = "./edgedriver_win64/msedgedriver.exe"
 
     PATH_CHROME = "./chromedriver_win32/chromedriver.exe"
@@ -25,7 +25,7 @@ class NikeBot:
             elif driver == "chrome":
                 self.driver = webdriver.Chrome(self.PATH_CHROME)
             elif driver == "chrome-linux":
-                self.driver = webdriver.Chrome(self.PATH_CHROME_LINUX)    
+                self.driver = webdriver.Chrome(self.PATH_CHROME_LINUX)
             else:
                 print(driver + " is not a supported webdriver please choose an other one")
                 print(Fore.RESET)
@@ -87,41 +87,49 @@ class NikeBot:
         self.driver.get("https://www.nike.com.br/Checkout")
 
     def go_to_payment(self):
-        confirm_xpath = "/html/body/div[12]/div/div/div[3]/button[1]"
         try:
-            check_frete = WebDriverWait(self.driver, 10).until(
+            check = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "tipo-frete-1"))
             )
-            check_frete.click()
+            check.click()
 
             go_to_payment_btn = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.ID, "seguir-pagamento"))
             )
             go_to_payment_btn.click()
-            confirm_btn = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, confirm_xpath))
+
+            confirm_modal_footer = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "ModalCorpoCentralizado"))
             )
-            confirm_btn.click()
+            modal_id = confirm_modal_footer.get_attribute("id")
+            modal_id = str(modal_id).split("_")
+            print(modal_id)
+            button = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.NAME, f'btn0_modalNotice_{modal_id[1]}'))
+            )
+            button.click()
+
         except Exception as error:
             print("[*] Erro ao ir para pagamento\n")
             print(error)
 
     def finish_purchase(self):
         try:
-            arrow = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable((By.CLASS_NAME, "select-cta-arrow"))
-                )
+            arrow = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "select-cta-arrow"))
+            )
             arrow.click()
 
-            WebDriverWait(self.driver, 5).until(
-                EC.element_to_be_clickable(By.NAME, "ccidradio")
+            sleep(1)
+            cards = self.driver.find_elements_by_name("ccidradio")
+            self.driver.execute_script("arguments[0].click()", cards[-1])
+
+            check = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable((By.CLASS_NAME, "custom-control-input"))
             )
-            self.driver.execute_script("document.getElementsByName(\"ccidradio\")[1].click()", )
-    
-            check = WebDriverWait(self.driver, 5).until(
-                    EC.element_to_be_clickable(By.ID, "politica-trocas")
-            )
-            check.click()
+            print("id: " + check.get_attribute("id"))
+            self.driver.execute_script("arguments[0].click()", check)
         except Exception as e:
             print("[*] Error when trying to finish purchase")
-            print(e)
+            if e:
+                print(e)
