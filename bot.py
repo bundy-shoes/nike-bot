@@ -16,12 +16,16 @@ class NikeBot:
 
     PATH_CHROME = "./chromedriver_win32/chromedriver.exe"
 
+    PATH_CHROME_LINUX = "./chromedriver_linux64/chromedriver"
+
     def __init__(self, driver):
         if driver:
             if driver == "edge":
                 self.driver = webdriver.Edge(self.PATH_EDGE)
             elif driver == "chrome":
                 self.driver = webdriver.Chrome(self.PATH_CHROME)
+            elif driver == "chrome-linux":
+                self.driver = webdriver.Chrome(self.PATH_CHROME_LINUX)    
             else:
                 print(driver + " is not a supported webdriver please choose an other one")
                 print(Fore.RESET)
