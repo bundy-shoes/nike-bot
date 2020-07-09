@@ -103,7 +103,6 @@ class NikeBot:
             )
             modal_id = confirm_modal_footer.get_attribute("id")
             modal_id = str(modal_id).split("_")
-            print(modal_id)
             button = WebDriverWait(self.driver, 10).until(
                 EC.element_to_be_clickable((By.NAME, f'btn0_modalNotice_{modal_id[1]}'))
             )
@@ -123,12 +122,6 @@ class NikeBot:
             sleep(1)
             cards = self.driver.find_elements_by_name("ccidradio")
             self.driver.execute_script("arguments[0].click()", cards[-1])
-
-            check = WebDriverWait(self.driver, 10).until(
-                EC.element_to_be_clickable((By.CLASS_NAME, "custom-control-input"))
-            )
-            print("id: " + check.get_attribute("id"))
-            self.driver.execute_script("arguments[0].click()", check)
         except Exception as e:
             print("[*] Error when trying to finish purchase")
             if e:
